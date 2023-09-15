@@ -17,13 +17,20 @@ class SpotifyExtract:
         self.token = token
 
     def _generate_headers(self):
-        return {"Accept": "application/json",
-                "Content-Type": "application/json",
-                "Authorization": "Bearer {token}".format(token=TOKEN)}
+        return {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "Authorization": "Bearer {token}".format(token=TOKEN),
+        }
 
-    def extract_user_top_artists_or_tracks(self, type="artists", time_range="short_term", limit=5):
-        endpoint_url = "{url}/me/top/{type}?time_range={time_range}&limit={limit}".format(
-            url=API_URL, type=type, time_range=time_range, limit=limit)
+    def extract_user_top_artists_or_tracks(
+        self, type="artists", time_range="short_term", limit=5
+    ):
+        endpoint_url = (
+            "{url}/me/top/{type}?time_range={time_range}&limit={limit}".format(
+                url=API_URL, type=type, time_range=time_range, limit=limit
+            )
+        )
 
         response = requests.get(endpoint_url, headers=self._generate_headers())
 
@@ -61,21 +68,23 @@ if __name__ == "__main__":
         "artist_name": names,
         "genres": genres,
         "popularity": popularity,
-        "followers_amount": followers
+        "followers_amount": followers,
     }
 
-    artist_df = pd.DataFrame(artist_dict, columns=[
-                             "artist_name", "genres", "popularity", "followers_amount"])
+    artist_df = pd.DataFrame(
+        artist_dict, columns=["artist_name", "genres", "popularity", "followers_amount"]
+    )
 
     # Normalize by exploding genre multiple elements
-    artist_df = artist_df.explode("genres")\
-        .reset_index(drop=True)
+    artist_df = artist_df.explode("genres").reset_index(drop=True)
 
     # Impute data if missing
-    artist_df[["artist_name", "genres"]] = artist_df[[
-        "artist_name", "genres"]].fillna(value="Undefinded")
-    artist_df[["popularity", "followers_amount"]] = artist_df[[
-        "popularity", "followers_amount"]].fillna(value=0)
+    artist_df[["artist_name", "genres"]] = artist_df[["artist_name", "genres"]].fillna(
+        value="Undefinded"
+    )
+    artist_df[["popularity", "followers_amount"]] = artist_df[
+        ["popularity", "followers_amount"]
+    ].fillna(value=0)
 
     # Validate
     if extractor.check_if_valid_data(artist_df):
@@ -83,11 +92,11 @@ if __name__ == "__main__":
 
     # Load
     connection = create_connection(
-        host='localhost', database=MYSQL_DB, user=MYSQL_USER, password=MYSQL_PASS)
+        host="localhost", database=MYSQL_DB, user=MYSQL_USER, password=MYSQL_PASS
+    )
     cursor = connection.cursor()
 
-    sql_query = \
-        """
+    sql_query = """
         CREATE TABLE IF NOT EXISTS my_top_artists(
             my_top_artist INT NOT NULL AUTO_INCREMENT,
             artist_name VARCHAR(255),
@@ -101,14 +110,16 @@ if __name__ == "__main__":
     cursor.execute(sql_query)
     print("Opened database successfully")
 
-    sql_insert = \
-        """INSERT INTO 
-                my_top_artists(artist_name, artist_genre, artist_popularity, artist_followers_amount)
-           VALUES 
+    sql_insert = """
+            INSERT INTO
+                my_top_artists(artist_name,
+                    artist_genre,
+                    artist_popularity,
+                    artist_followers_amount)
+           VALUES
                 ( %s, %s, %s, %s)"""
 
-    values = artist_df.to_records(index=False)\
-        .tolist()
+    values = artist_df.to_records(index=False).tolist()
 
     cursor.executemany(sql_insert, values)
     connection.commit()

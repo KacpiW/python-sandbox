@@ -14,13 +14,13 @@ Python >=3.6
 
 ### Installation
 
-```console 
+```console
   pip install -r requirements.txt
 ```
 
 Or clone the git repo:
 
-```console 
+```console
   git clone https://github.com/KacpiW/web-scraper.git
   cd web-scraper
   pip install -r requirements.txt
