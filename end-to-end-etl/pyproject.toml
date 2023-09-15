@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "end-to-end"
+version = "0.1.0"
+description = "End to end data engineering project"
+authors = ["Kacper <kacper.wozni@gmail.com>"]
+readme = "README.md"
+packages = [
+    {include = "end_to_end", from = "src"}
+    ]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+boto3 = "^1.26.160"
+botocore = "^1.29.163"
+mysql-connector-python = "^8.0.33"
+python-dotenv = "^1.0.0"7
+
+
+[tool.poetry.group.dev.dependencies]
+autopep8 = "^2.0.2"
+pytest = "^7.4.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
