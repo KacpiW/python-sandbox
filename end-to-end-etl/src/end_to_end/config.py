@@ -2,7 +2,7 @@ import os
 import logging
 from logging.handlers import RotatingFileHandler
 
-from dotenv import load_dotenv, find_dotenv
+from dotenv import load_dotenv
 
 # Load environment variables
 dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
@@ -13,13 +13,14 @@ def setup_logger(logger_name: str, log_file: str) -> logging.Logger:
     """
     Set up a logger with the specified name, log file, and log level.
     """
-    debug = os.getenv('DEBUG')
+    debug = os.getenv("DEBUG")
     logger = logging.getLogger(logger_name)
     logger.setLevel(logging.DEBUG if debug else logging.INFO)
 
     handler = RotatingFileHandler(log_file, maxBytes=100000, backupCount=10)
     formatter = logging.Formatter(
-        '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 

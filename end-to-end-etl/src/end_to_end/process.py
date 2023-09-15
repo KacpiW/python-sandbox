@@ -3,7 +3,7 @@ from typing import Dict
 
 from end_to_end.config import setup_logger
 
-logger = setup_logger(__name__, 'ete.log')
+logger = setup_logger(__name__, "ete.log")
 
 
 def _convert_datetime_to_utc(time: str) -> datetime:
@@ -27,7 +27,7 @@ def process_vehicles(record: Dict[str, str]):
         vehicle_records["id"],
         vehicle_records["location"]["lat"],
         vehicle_records["location"]["lng"],
-        _convert_datetime_to_utc(vehicle_records["location"]["at"])
+        _convert_datetime_to_utc(vehicle_records["location"]["at"]),
     )
 
 
@@ -40,7 +40,7 @@ def process_operating_periods(record: Dict[str, str]):
     return (
         operation_period_records["id"],
         _convert_datetime_to_utc(operation_period_records["start"]),
-        _convert_datetime_to_utc(operation_period_records["finish"])
+        _convert_datetime_to_utc(operation_period_records["finish"]),
     )
 
 
@@ -58,5 +58,5 @@ def process_events(record: Dict[str, str]):
         _convert_datetime_to_utc(record["at"]),
         record["organization_id"],
         data_id if entity_type == "vehicle" else None,
-        data_id if entity_type == "operating_period" else None
+        data_id if entity_type == "operating_period" else None,
     )

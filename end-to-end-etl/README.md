@@ -19,7 +19,7 @@ Before you can run this application, you need to have Docker and Docker Compose 
    - MYSQL_USER
    - MYSQL_PASSWORD
    - MYSQL_HOST="db" (Set docker service name)
-   - MYSQL_USER="root" 
+   - MYSQL_USER="root"
    - MYSQL_PASSWD="secret"
    - MYSQL_DB="db"
    - EXTRACT_S3_BUCKET (Name of s3 bucket where raw files are located)

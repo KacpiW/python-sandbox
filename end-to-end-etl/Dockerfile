@@ -26,4 +26,3 @@ ENV PATH="app/.venv/bin:$PATH"
 # Run the command to start your application when the container launches.
 # This will be the name of your python script.
 CMD ["python3", "/app/src/end_to_end/main.py"]
-

@@ -36,5 +36,3 @@ services:
       retries: 10
 volumes:
   db_data:
-
-

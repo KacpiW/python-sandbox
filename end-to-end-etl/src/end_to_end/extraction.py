@@ -7,7 +7,7 @@ from botocore.exceptions import ClientError
 
 from end_to_end.config import setup_logger
 
-logger = setup_logger(__name__, 'ete.log')
+logger = setup_logger(__name__, "ete.log")
 
 
 class Extractor:
@@ -35,27 +35,30 @@ class Extractor:
             logger.error(f"Error while getting the last processed file: {e}")
             return None
 
-    def get_unprocessed_files(self, bucket: str, start_after: Optional[str], prefix: str = "data/") -> Generator:
+    def get_unprocessed_files(
+        self, bucket: str, start_after: Optional[str], prefix: str = "data/"
+    ) -> Generator:
         """
         Yield unprocessed files from the S3 bucket.
         """
-        request_args = {'Bucket': bucket, 'Prefix': prefix}
+        request_args = {"Bucket": bucket, "Prefix": prefix}
         if start_after:
             request_args["StartAfter"] = start_after
 
         while True:
             response = self.s3_client.list_objects_v2(**request_args)
-            if 'Contents' in response:
+            if "Contents" in response:
                 for file in response["Contents"]:
-                    file_obj = self.s3_client.get_object(
-                        Bucket=bucket, Key=file["Key"])
+                    file_obj = self.s3_client.get_object(Bucket=bucket, Key=file["Key"])
                     logger.debug(f"Processing file: {file['Key']}")
                     yield file, file_obj
-            if 'NextContinuationToken' not in response:
+            if "NextContinuationToken" not in response:
                 break
-            request_args['ContinuationToken'] = response['NextContinuationToken']
+            request_args["ContinuationToken"] = response["NextContinuationToken"]
 
-    def set_last_processed_file_name(self, filename: str, bucket: str, start_after: str) -> None:
+    def set_last_processed_file_name(
+        self, filename: str, bucket: str, start_after: str
+    ) -> None:
         """
         Set the name of the last processed file.
         """
