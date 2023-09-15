@@ -10,11 +10,11 @@ from end_to_end.config import (
     HOST,
     USER,
     PASSWD,
-    DB
+    DB,
 )
 
 # Set up logger
-logger = setup_logger(__name__, 'ete.log')
+logger = setup_logger(__name__, "ete.log")
 
 
 def process_files(loader, extractor, unprocessed_files):
@@ -24,13 +24,16 @@ def process_files(loader, extractor, unprocessed_files):
             json_record = json.loads(record)
 
             # Vehicle Processing
-            if json_record["on"] == "vehicle" and json_record["event"] not in ["register", "deregister"]:
-                print(json_record)
+            if json_record["on"] == "vehicle" and json_record["event"] not in [
+                "register",
+                "deregister",
+            ]:
+                logger.debug(json_record)
                 vehicles_data = process_vehicles(json_record)
                 loader.insert_data(
                     table_name="vehicles",
                     columns="id, lat, lng, at",
-                    data=vehicles_data
+                    data=vehicles_data,
                 )
                 logger.debug("Vehicle data inserted.")
 
@@ -41,7 +44,7 @@ def process_files(loader, extractor, unprocessed_files):
                 loader.insert_data(
                     table_name="operating_periods",
                     columns="id, start, finish",
-                    data=operating_period_data
+                    data=operating_period_data,
                 )
                 logger.debug("Operating period data inserted.")
 
@@ -50,21 +53,25 @@ def process_files(loader, extractor, unprocessed_files):
                 events_data = process_events(json_record)
                 loader.insert_data(
                     table_name="events",
-                    columns="event_type, entity_type, at, organization_id, vehicle_id,  operating_period_id",
-                    data=events_data
+                    columns="""event_type,
+                        entity_type,
+                        at,
+                        organization_id,
+                        vehicle_id,
+                        operating_period_id
+                    """,
+                    data=events_data,
                 )
                 logger.debug("Event data inserted.")
 
         copy_object_between_buckets(
-            extract=EXTRACT_S3_BUCKET,
-            load=LOAD_S3_BUCKET,
-            file_name=file["Key"]
+            extract=EXTRACT_S3_BUCKET, load=LOAD_S3_BUCKET, file_name=file["Key"]
         )
 
         extractor.set_last_processed_file_name(
             filename=LAST_PROCESSED_FILE_NAME,
             bucket=LOAD_S3_BUCKET,
-            start_after=file["Key"]
+            start_after=file["Key"],
         )
 
         logger.info(f"Finished processing file: {file['Key']}")
