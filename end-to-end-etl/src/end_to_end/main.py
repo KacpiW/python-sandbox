@@ -31,9 +31,9 @@ def process_files(loader, extractor, unprocessed_files):
                 logger.debug(json_record)
                 vehicles_data = process_vehicles(json_record)
                 loader.insert_data(
-                    table_name="vehicles",
                     columns="id, lat, lng, at",
                     data=vehicles_data,
+                    table_name="vehicles",
                 )
                 logger.debug("Vehicle data inserted.")
 
@@ -62,8 +62,8 @@ def process_files(loader, extractor, unprocessed_files):
                     """,
                     data=events_data,
                 )
-                logger.debug("Event data inserted.")
 
+                logger.debug("Event data inserted.")
         copy_object_between_buckets(
             extract=EXTRACT_S3_BUCKET, load=LOAD_S3_BUCKET, file_name=file["Key"]
         )
