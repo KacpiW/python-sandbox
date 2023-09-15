@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "capstone-project-polars-nyc-taxi"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+packages = [
+    {include = "src"},
+    {include = "jobs", from = "src"}
+    ]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+polars = "0.18.3"
+pytest = "^7.3.2"
+
+[tool.poetry.group.dev.dependencies]
+polars = "0.18.3"
+pytest = "^7.3.2"
+black = "^23.3.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
