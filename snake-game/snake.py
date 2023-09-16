@@ -30,8 +30,8 @@ class Snake:
         self.length = length
         self.parent_screen = parent_screen
         self.block = pygame.image.load("resources/block.jpg").convert()
-        self.x = [SIZE]*length
-        self.y = [SIZE]*length
+        self.x = [SIZE] * length
+        self.y = [SIZE] * length
         self.direction = "down"
 
     def increase_length(self):
@@ -45,10 +45,9 @@ class Snake:
         pygame.display.flip()
 
     def walk(self):
-
-        for i in range(self.length-1, 0, -1):
-            self.x[i] = self.x[i-1]
-            self.y[i] = self.y[i-1]
+        for i in range(self.length - 1, 0, -1):
+            self.x[i] = self.x[i - 1]
+            self.y[i] = self.y[i - 1]
 
         if self.direction == "up":
             self.y[0] -= SIZE
@@ -124,39 +123,40 @@ class Game:
         pygame.display.flip()
 
         # logic of snake colliding with apple
-        if self.is_collision(self.snake.x[0], self.snake.y[0], self.apple.x, self.apple.y):
+        if self.is_collision(
+            self.snake.x[0], self.snake.y[0], self.apple.x, self.apple.y
+        ):
             self.play_sound("resources/1_snake_game_resources_ding.mp3")
             self.snake.increase_length()
             self.apple.move()
 
         # logic of snake colliding with itself
         for i in range(3, self.snake.length):
-            if self.is_collision(self.snake.x[0], self.snake.y[0], self.snake.x[i], self.snake.y[i]):
+            if self.is_collision(
+                self.snake.x[0], self.snake.y[0], self.snake.x[i], self.snake.y[i]
+            ):
                 self.play_sound("resources/1_snake_game_resources_crash.mp3")
                 raise "GAME OVER"
 
         # logic of snake if colliding with boundry
-        if self.is_beyond_screen(self.snake.x[0], self.snake.y[0], x_min=0, y_min=0, x_max=1000, y_max=800):
-            self.play_sound(
-                "resources/1_snake_game_resources_crash.mp3")
+        if self.is_beyond_screen(
+            self.snake.x[0], self.snake.y[0], x_min=0, y_min=0, x_max=1000, y_max=800
+        ):
+            self.play_sound("resources/1_snake_game_resources_crash.mp3")
             raise "GAME OVER"
 
     def display_score(self):
-        font = pygame.font.SysFont('arial', 30)
-        score = font.render(
-            f"Score: {self.snake.length}", True, (255, 255, 255))
+        font = pygame.font.SysFont("arial", 30)
+        score = font.render(f"Score: {self.snake.length}", True, (255, 255, 255))
         self.surface.blit(score, (800, 10))
 
     def show_game_over(self):
         self.render_background()
-        font = pygame.font.SysFont('arial', 30)
-        line1 = font.render(
-            f"Score: {self.snake.length}", True, (255, 255, 255)
-        )
+        font = pygame.font.SysFont("arial", 30)
+        line1 = font.render(f"Score: {self.snake.length}", True, (255, 255, 255))
         self.surface.blit(line1, (200, 300))
         line2 = font.render(
-            f"To play again press Enter. To exit press Escape!", True, (
-                255, 255, 255)
+            f"To play again press Enter. To exit press Escape!", True, (255, 255, 255)
         )
         self.surface.blit(line2, (200, 350))
         pygame.display.flip()

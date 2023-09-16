@@ -43,15 +43,12 @@ with SparkSession.builder.appName("Taxi Efficiency").getOrCreate() as spark:
             logger.error("Data file is empty.")
         else:
             # Calculate travel time and convert trip distance to meters
-            taxi_data_with_time = (
-                taxi_data.withColumn(
-                    "travel_time",
-                    udf_calculate_travel_time(
-                        taxi_data.tpep_pickup_datetime, taxi_data.tpep_dropoff_datetime
-                    ),
-                )
-                .withColumn("trip_distance", taxi_data.trip_distance * 1609.34)
-            )
+            taxi_data_with_time = taxi_data.withColumn(
+                "travel_time",
+                udf_calculate_travel_time(
+                    taxi_data.tpep_pickup_datetime, taxi_data.tpep_dropoff_datetime
+                ),
+            ).withColumn("trip_distance", taxi_data.trip_distance * 1609.34)
 
             # Calculate trip speed
             taxi_data_with_speed = taxi_data_with_time.withColumn(

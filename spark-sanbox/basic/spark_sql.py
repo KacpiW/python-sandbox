@@ -4,8 +4,12 @@ from pyspark.sql.functions import round, col
 
 def mapper(line):
     fields = line.split(",")
-    return Row(ID=int(fields[0]), name=str(fields[1].encode("utf-8")),
-               age=int(fields[2]), numFriends=int(fields[3]))
+    return Row(
+        ID=int(fields[0]),
+        name=str(fields[1].encode("utf-8")),
+        age=int(fields[2]),
+        numFriends=int(fields[3]),
+    )
 
 
 def order_mapper(line):
@@ -38,10 +42,10 @@ with SparkSession.builder.appName("socialNetwork").getOrCreate() as spark:
     schema_order = spark.createDataFrame(orders).cache()
     schema_order.createOrReplaceTempView("orders")
 
-    schema_order.groupBy("customer_id")\
-        .avg("value")\
-        .withColumnRenamed("avg(value)", "average_value")\
-        .withColumn("average_value", col("average_value").cast("float"))\
-        .withColumn("average_value", round("average_value", 4))\
-        .orderBy("average_value")\
-        .show()
+    schema_order.groupBy("customer_id").avg("value").withColumnRenamed(
+        "avg(value)", "average_value"
+    ).withColumn("average_value", col("average_value").cast("float")).withColumn(
+        "average_value", round("average_value", 4)
+    ).orderBy(
+        "average_value"
+    ).show()

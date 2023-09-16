@@ -10,7 +10,6 @@ BEARER_TOKEN = os.environ.get("BEARER_TOKEN")
 
 
 class Stream(ABC):
-
     def __init__(self):
         self.authentication = OAuth2Bearer(BEARER_TOKEN)
 
@@ -20,12 +19,13 @@ class Stream(ABC):
 
     def connect_to_endpoint(self):
         endpoint = self.endpoint
-        response = requests.get(
-            endpoint, auth=self.authentication, stream=True)
+        response = requests.get(endpoint, auth=self.authentication, stream=True)
 
         if response.status_code != 200:
-            raise Exception("Request returned an error: %s %s" %
-                            (response.status_code, response.text))
+            raise Exception(
+                "Request returned an error: %s %s"
+                % (response.status_code, response.text)
+            )
 
         return response
 
@@ -46,7 +46,9 @@ class SampledStream(Stream):
         super().__init__()
         if parameters is not None:
             self.custom_parameters = "&".join(
-                key.replace(' ', '').lower() + "=" + value.replace(' ', '').lower() for key, value in parameters.items())
+                key.replace(" ", "").lower() + "=" + value.replace(" ", "").lower()
+                for key, value in parameters.items()
+            )
         else:
             self.custom_parameters = None
 
@@ -60,7 +62,6 @@ class SampledStream(Stream):
 
 
 class FilteredStream(Stream):
-
     def endpoint(self, rules=True) -> str:
         if rules:
             return "https://api.twitter.com/2/tweets/search/stream/rules"
@@ -70,43 +71,49 @@ class FilteredStream(Stream):
     def read_rules(self):
         response = requests.get(self.endpoint, auth=self.authentication)
         if response.status_code != 200:
-            raise Exception("Cannot download rules (HTTP %s) : %s" %
-                            response.status_code, response.text)
+            raise Exception(
+                "Cannot download rules (HTTP %s) : %s" % response.status_code,
+                response.text,
+            )
         else:
             print(json.dumps(response.json(), indent=4, ensure_ascii=False))
 
     def add_rules(self, rules: list) -> None:
         if isinstance(rules, list):
-
             for _rule in rules:
                 if isinstance(_rule, dict):
                     continue
                 else:
                     raise Exception(
-                        "Type Error: must be dict, not %s" % type(_rule).__name__)
+                        "Type Error: must be dict, not %s" % type(_rule).__name__
+                    )
 
             payload = {"add": rules}
             response = requests.post(
-                self.endpoint(), json=payload, auth=self.authentication)
+                self.endpoint(), json=payload, auth=self.authentication
+            )
 
             if response.status_code != 201:
-                raise Exception("Cannot add rules (HTTP %s): %s" %
-                                (response.status_code, response.text))
+                raise Exception(
+                    "Cannot add rules (HTTP %s): %s"
+                    % (response.status_code, response.text)
+                )
             print(json.dumps(response.json(), indent=4, ensure_ascii=False))
 
         else:
-            raise Exception("Type Error: must be list, not %s" %
-                            type(rules).__name__)
+            raise Exception("Type Error: must be list, not %s" % type(rules).__name__)
 
     def _rule_removal(self, rule_ids: list):
         payload = {"delete": {"ids": rule_ids}}
         response = requests.post(
-            self.endpoint(), json=payload, auth=self.authentication)
+            self.endpoint(), json=payload, auth=self.authentication
+        )
         if response.status_code != 201:
-            raise Exception("Cannot remove rules (HTTP %s): %s" %
-                            (response.status_code, response.text))
-        print(json.dumps(response.json(), indent=4,
-              sort_keys=True, ensure_ascii=False))
+            raise Exception(
+                "Cannot remove rules (HTTP %s): %s"
+                % (response.status_code, response.text)
+            )
+        print(json.dumps(response.json(), indent=4, sort_keys=True, ensure_ascii=False))
 
     def remove_all_rules(self, rules: dict) -> None:
         if rules is None or "data" not in rules:

@@ -9,7 +9,7 @@ from src.jobs.config import (
     YEAR_FILTER,
     DATASET_FOLDER,
     KM_MULTIPLIER,
-    DECIMAL_PLACES
+    DECIMAL_PLACES,
 )
 
 # Set up logging format and level
@@ -32,7 +32,9 @@ def create_monthly_average_trip_distance_query(dataset: pl.LazyFrame) -> pl.Lazy
     with_extra_columns = selected_columns.with_columns(
         [
             pl.col("tpep_pickup_datetime").dt.month().alias("tpep_pickup_month"),
-            (pl.col("trip_distance") * KM_MULTIPLIER).round(DECIMAL_PLACES).alias("trip_distance_km"),
+            (pl.col("trip_distance") * KM_MULTIPLIER)
+            .round(DECIMAL_PLACES)
+            .alias("trip_distance_km"),
         ]
     )
 
@@ -43,7 +45,10 @@ def create_monthly_average_trip_distance_query(dataset: pl.LazyFrame) -> pl.Lazy
     grouped = filtered.groupby("tpep_pickup_month")
 
     aggregated = grouped.agg(
-        pl.col("trip_distance_km").mean().round(DECIMAL_PLACES).alias("avg_trip_distance_km")
+        pl.col("trip_distance_km")
+        .mean()
+        .round(DECIMAL_PLACES)
+        .alias("avg_trip_distance_km")
     )
 
     aggregated_results = aggregated.sort("tpep_pickup_month", descending=False)
@@ -52,7 +57,6 @@ def create_monthly_average_trip_distance_query(dataset: pl.LazyFrame) -> pl.Lazy
 
 
 if __name__ == "__main__":
-
     try:
         # Lazy evaluation
         df = pl.scan_parquet(str(DATASET_FOLDER / "yellow_*.parquet"))

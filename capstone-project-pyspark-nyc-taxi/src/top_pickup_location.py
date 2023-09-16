@@ -8,7 +8,6 @@ DATASET_FOLDER = PosixPath(__file__).parent.parent / "dataset"
 
 
 with SparkSession.builder.appName("PickupLocations").getOrCreate() as spark:
-
     try:
         # Load data
         taxi_data = spark.read.parquet(str(DATASET_FOLDER))
@@ -32,9 +31,7 @@ with SparkSession.builder.appName("PickupLocations").getOrCreate() as spark:
             window = Window.partitionBy("month").orderBy(desc("PickupLocationCount"))
 
             top_five_pickup = (
-                pickup_per_month.withColumn(
-                    "rank", row_number().over(window)
-                )
+                pickup_per_month.withColumn("rank", row_number().over(window))
                 .filter(col("rank") <= 5)
                 .drop("rank")
             )
@@ -47,14 +44,11 @@ with SparkSession.builder.appName("PickupLocations").getOrCreate() as spark:
             )
 
             # Join top pickup locations with zone names
-            top_five_pickup_with_name = (
-                top_five_pickup.join(
-                    broadcast(location_names),
-                    top_five_pickup.PULocationID == location_names.LocationID,
-                    how="left",
-                )
-                .select("month", "Zone", "PickupLocationCount")
-            )
+            top_five_pickup_with_name = top_five_pickup.join(
+                broadcast(location_names),
+                top_five_pickup.PULocationID == location_names.LocationID,
+                how="left",
+            ).select("month", "Zone", "PickupLocationCount")
 
             for results in top_five_pickup_with_name.collect():
                 print(

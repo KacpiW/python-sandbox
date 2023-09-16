@@ -36,11 +36,9 @@ with SparkSession.builder.appName("PeakTime").getOrCreate() as spark:
             ).withColumn("month", month(col("tpep_pickup_datetime")))
 
             # Filter records by date range and select required columns
-            filtered_taxi_data_hour_minute = (
-                taxi_data_hour_minute.filter(
-                    col("tpep_pickup_datetime").between("2023-01-01", "2023-12-31")
-                ).select("month", "hour_minute")
-            )
+            filtered_taxi_data_hour_minute = taxi_data_hour_minute.filter(
+                col("tpep_pickup_datetime").between("2023-01-01", "2023-12-31")
+            ).select("month", "hour_minute")
 
             # Window specification for row_number operation
             window_spec = Window.partitionBy("month").orderBy(desc("count"))

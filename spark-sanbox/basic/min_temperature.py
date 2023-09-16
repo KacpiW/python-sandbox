@@ -4,11 +4,12 @@ conf = SparkConf().setMaster("local").setAppName("MinTemperature")
 sc = SparkContext(conf=conf)
 
 lines = sc.textFile(
-    "file:///Users/kacper.wozniak/Documents/udemy/spark/datasets/1800.csv")
+    "file:///Users/kacper.wozniak/Documents/udemy/spark/datasets/1800.csv"
+)
 
 
 def parse_lines(line):
-    fields = line.split(',')
+    fields = line.split(",")
     station_id = fields[0]
     entry_type = fields[2]
     temperature = int(fields[3])
@@ -26,7 +27,8 @@ for result in min_station_temps.collect():
 
 station_avg_temps = lines.map(lambda x: (x[0], x[2]))
 station_avg_temps = station_avg_temps.mapValues(lambda x: (x, 1)).reduceByKey(
-    lambda x, y: (x[0] + y[0], x[1] + y[1]))
+    lambda x, y: (x[0] + y[0], x[1] + y[1])
+)
 station_avg_temps = station_avg_temps.mapValues(lambda x: int(x[0] / x[1]))
 
 for result in station_avg_temps.collect():

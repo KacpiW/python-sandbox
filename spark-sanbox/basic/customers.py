@@ -9,9 +9,9 @@ orders = sc.textFile("datasets/customer-orders.csv")
 def parse_orders(line):
     fields = line.split(",")
     customer_id = fields[0]
-    item_id  = fields[1]
+    item_id = fields[1]
     order_value = float(fields[2])
-    return (customer_id, item_id , order_value)
+    return (customer_id, item_id, order_value)
 
 
 orders = orders.map(parse_orders)
