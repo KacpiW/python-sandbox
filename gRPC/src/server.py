@@ -45,8 +45,6 @@ class UserProfileServiceServicer(user_profile_pb2_grpc.UserProfileServiceService
     def ListUsers(self, request, context):
         pass
 
-    # Implement other RPC methods (GetUser, UpdateUser, DeleteUser, ListUsers) similarly
-
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
