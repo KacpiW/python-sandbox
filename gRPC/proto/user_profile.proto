@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package userprofile;
+
+service UserProfileService {
+    rpc CreateUser (UserProfileRequest) returns (UserProfileResponse);
+    rpc GetUser (UserIdentifier) returns (UserProfileResponse);
+    rpc UpdateUser (UserProfileRequest) returns (UserProfileResponse);
+    rpc DeleteUser (UserIdentifier) returns (UserProfileResponse);
+    rpc ListUsers (ListUsersRequest) returns (ListUsersResponse);
+}
+
+message UserProfileRequest {
+    string user_id = 1;
+    string name = 2;
+    string email = 3;
+    int32 age = 4;
+}
+
+message UserIdentifier {
+    string user_id = 1;
+}
+
+message UserProfileResponse {
+    string message = 1;
+    UserProfileRequest user_profile = 2;
+}
+
+message ListUsersRequest {}
+
+message ListUsersResponse {
+    repeated UserProfileRequest user_profiles = 1;
+}
